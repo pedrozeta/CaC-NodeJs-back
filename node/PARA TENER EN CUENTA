@@ -1,0 +1,3 @@
+Para que esto funcione hay que instalar express y mysql2.
+El package.json tiene una modificación respecto al original.
+El resto, se instala.
