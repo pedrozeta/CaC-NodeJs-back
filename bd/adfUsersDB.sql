@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 21-06-2024 a las 00:29:19
+-- Tiempo de generación: 23-06-2024 a las 00:02:01
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -57,6 +57,17 @@ CREATE TABLE `users` (
   `contrasena` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `users`
+--
+
+INSERT INTO `users` (`id_user`, `email`, `contrasena`) VALUES
+(3, 'pirulo@mail.com', '220fOJ'),
+(4, 'toto@mail.com', 'totomail'),
+(12, 'paleta@mail.com', 'helado'),
+(13, 'paleta@mail.com', 'helado'),
+(14, 'chol@mail.com', 'valiu');
+
 -- --------------------------------------------------------
 
 --
@@ -65,6 +76,8 @@ CREATE TABLE `users` (
 
 CREATE TABLE `usersData` (
   `id_data` int(11) NOT NULL,
+  `nombre` varchar(30) NOT NULL,
+  `apellido` varchar(30) NOT NULL,
   `fNacimiento` date NOT NULL,
   `sexo` text NOT NULL,
   `id_dataUser` int(11) NOT NULL
@@ -87,6 +100,7 @@ ALTER TABLE `rol`
 --
 ALTER TABLE `userImg`
   ADD PRIMARY KEY (`img_id`),
+  ADD UNIQUE KEY `userImg_id_2` (`userImg_id`),
   ADD KEY `userImg_id` (`userImg_id`);
 
 --
@@ -122,7 +136,7 @@ ALTER TABLE `userImg`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `usersData`
