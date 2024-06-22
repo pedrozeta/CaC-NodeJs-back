@@ -3,11 +3,16 @@ import pool from './config/db.js';
 
 const app = express();
 
-// Define routes here
-app.get('/', async (req, res) => {
+//middlewares
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
+
+// Definir rutas
+app.get('/users', async (req, res) => {
     try{
         const connection = await pool.getConnection();
-        const [rows, fields] = await connection.query('SELECT * FROM users');
+        const sql = 'SELECT * FROM users'
+        const [rows, fields] = await connection.query(sql);
         connection.release();
         res.json(rows);
     } catch (err) {
@@ -15,26 +20,91 @@ app.get('/', async (req, res) => {
         res.status(500).send('Hubo un error al consultar la BD');
     }
 });
+//revisado
 
-app.post('/users', (req, res) => {
-    // Create a new user
+
+
+app.get('/users/:id', async (req, res) => {
+    try {
+        const connection = await pool.getConnection();
+        const id_user = req.params.id
+        const sql = 'SELECT * FROM users WHERE id_user = ?';
+
+        const [rows, fields] = await connection.query(sql, [id_user]);
+        connection.release();
+        if (rows.length === 0) {
+            res.status(404).send('Usuario no encontrado');
+        } else {
+            res.json(rows[0]);
+        }
+    } catch (err) {
+        console.error('Hubo un error al consultar la BD:', err);
+        res.status(500).send('Hubo un error al consultar la BD');
+    }
 });
+//revisado
 
-app.get('/users', (req, res) => {
+app.post('/users', async (req, res) => {
+    try{
+        const connection = await pool.getConnection();
+        const userData = req.body;
+        const sql = 'INSERT INTO users SET ?';
+        const [rows] = await connection.query(sql, [userData]);//;
+        connection.release();
+        res.json({mensaje: 'Usuario agregado', id_user: rows.insertId});
+            } catch (err) {
+                console.error('Hubo un error al agregar el usuario', err);
+                res.status(500).send('Hubo un error al agregar el usuario'); 
+            }
+});
+//revisado
+
+
+
+
+app.get('/', (req, res) => {
     // Get all users
 });
 
-app.get('/users/:id', (req, res) => {
-    // Get a specific user by ID
+
+
+//PUT
+app.post('/users/:id', async (req, res) => {
+    try {
+        const connection = await pool.getConnection();
+        const id_user = req.params.id
+        const userData = req.body;
+        const sql = 'UPDATE users SET ? WHERE id_user = ?';
+        const [rows] = await connection.query(sql, [userData, id_user]);
+        connection.release();
+        res.json({ mensaje: 'Datos de usuario actualizados'});
+    } catch (err) {
+        console.error('Hubo un error al consultar la BD', err);
+        res.status(500).send('Hubo un error al consultar la BD');
+    }
+});
+//revisado
+
+//DELETE
+app.get('/users/borrar/:id', async (req, res) => {
+    try {
+        const connection = await pool.getConnection();
+        const id_user = req.params.id;                   //id_user
+        const sql = 'DELETE FROM users WHERE id_user = ?';
+        const [rows] = await connection.query(sql, [id_user]);
+        connection.release();
+        if (rows.affectedRows === 0) {
+            res.status(404).send('Usuario no encontrado');
+        } else {
+            res.json({ mensaje: 'Datos de usuario borrados'});
+        }
+    } catch (err) {
+        console.error('Hubo un error al consultar la BD', err);
+        res.status(500).send('Hubo un error al consultar la BD');
+    }
 });
 
-app.put('/users/:id', (req, res) => {
-    // Update a specific user by ID
-});
 
-app.delete('/users/:id', (req, res) => {
-    // Delete a specific user by ID
-});
 
 app.listen(3000, () => {
     console.log('El servidor está funcionando en el puerto 3000');
